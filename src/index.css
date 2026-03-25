@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", serif;
+  
+  --color-app-primary: #1A1A1A; /* Hinge uses very dark text/accents */
+  --color-app-secondary: #5D3FD3; /* Deep Indigo for primary actions */
+  --color-app-bg-light: #F9F7F2; /* Hinge signature cream background */
+  --color-app-bg-medium: #E8E6E1;
+  --color-app-text-dark: #1A1A1A;
+  --color-app-highlight: #FF5A5F; /* Coral for special highlights */
+  --color-app-soft: #F0EDE6;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+

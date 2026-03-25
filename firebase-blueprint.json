@@ -1,0 +1,149 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user profile information, coins, and privacy settings.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique identifier for the user." },
+        "displayName": { "type": "string", "description": "The user's display name." },
+        "photoURL": { "type": "string", "description": "The user's profile picture URL." },
+        "bio": { "type": "string", "description": "A short bio about the user." },
+        "coins": { "type": "integer", "description": "The user's current coin balance." },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "The user's role." },
+        "isVerified": { "type": "boolean", "description": "Whether the user's ID is verified." },
+        "privacySettings": {
+          "type": "object",
+          "properties": {
+            "showStories": { "type": "string", "enum": ["everyone", "matches", "nobody"] },
+            "showProfile": { "type": "string", "enum": ["everyone", "matches"] },
+            "allowChatFrom": { "type": "string", "enum": ["everyone", "verified_only", "matches_only"] },
+            "blockedUsers": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "lastActive": { "type": "string", "format": "date-time", "description": "The last time the user was active." }
+      },
+      "required": ["uid", "displayName", "coins", "role"]
+    },
+    "Swipe": {
+      "title": "Swipe Action",
+      "description": "Records a swipe action between two users.",
+      "type": "object",
+      "properties": {
+        "fromUid": { "type": "string" },
+        "toUid": { "type": "string" },
+        "type": { "type": "string", "enum": ["like", "dislike", "superlike"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fromUid", "toUid", "type", "timestamp"]
+    },
+    "Match": {
+      "title": "Match",
+      "description": "Represents a mutual match between two users.",
+      "type": "object",
+      "properties": {
+        "uids": { "type": "array", "items": { "type": "string" } },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uids", "timestamp"]
+    },
+    "Story": {
+      "title": "Story",
+      "description": "A short-lived post shared by a user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "mediaUrl": { "type": "string" },
+        "type": { "type": "string", "enum": ["image", "video"] },
+        "vibe": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "mediaUrl", "type", "timestamp", "expiresAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "A chat message between matched users.",
+      "type": "object",
+      "properties": {
+        "matchId": { "type": "string" },
+        "senderUid": { "type": "string" },
+        "text": { "type": "string" },
+        "mediaUrl": { "type": "string" },
+        "isSnap": { "type": "boolean" },
+        "isGift": { "type": "boolean" },
+        "giftId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["matchId", "senderUid", "timestamp"]
+    },
+    "Gift": {
+      "title": "Gift",
+      "description": "A coin gift sent from one user to another.",
+      "type": "object",
+      "properties": {
+        "fromUid": { "type": "string" },
+        "toUid": { "type": "string" },
+        "amount": { "type": "integer" },
+        "giftId": { "type": "string" },
+        "message": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fromUid", "toUid", "amount", "timestamp"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "A safety report filed by a user against another user.",
+      "type": "object",
+      "properties": {
+        "reporterUid": { "type": "string" },
+        "reportedUid": { "type": "string" },
+        "reason": { "type": "string" },
+        "details": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "reviewed", "resolved"] }
+      },
+      "required": ["reporterUid", "reportedUid", "reason", "timestamp", "status"]
+    },
+    "SuperComment": {
+      "title": "Super Comment",
+      "description": "A highlighted comment sent using coins.",
+      "type": "object",
+      "properties": {
+        "fromUid": { "type": "string" },
+        "targetUid": { "type": "string" },
+        "targetId": { "type": "string" },
+        "targetType": { "type": "string", "enum": ["profile", "story"] },
+        "text": { "type": "string" },
+        "amount": { "type": "integer" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["fromUid", "targetUid", "targetId", "targetType", "text", "amount", "timestamp"]
+    },
+    "Transaction": {
+      "title": "Transaction",
+      "description": "A record of coin purchase or usage.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "type": { "type": "string", "enum": ["purchase", "spend"] },
+        "amount": { "type": "integer" },
+        "description": { "type": "string" },
+        "stripePaymentIntentId": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "type", "amount", "description", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": "User", "description": "User profiles." },
+    "/swipes/{swipeId}": { "schema": "Swipe", "description": "User swipes." },
+    "/matches/{matchId}": { "schema": "Match", "description": "Mutual matches." },
+    "/stories/{storyId}": { "schema": "Story", "description": "User stories." },
+    "/matches/{matchId}/messages/{messageId}": { "schema": "Message", "description": "Chat messages within a match." },
+    "/gifts/{giftId}": { "schema": "Gift", "description": "Coin gifts." },
+    "/reports/{reportId}": { "schema": "Report", "description": "Safety reports." },
+    "/super_comments/{commentId}": { "schema": "SuperComment", "description": "Highlighted comments." },
+    "/transactions/{transactionId}": { "schema": "Transaction", "description": "Coin transaction history." }
+  }
+}

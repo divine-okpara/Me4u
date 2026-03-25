@@ -1,0 +1,9 @@
+{
+  "name": "Me4U",
+  "description": "A safe, playful, social dating app with a coin-based economy and privacy-first controls.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
